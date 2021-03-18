@@ -753,7 +753,6 @@ def _plot_evoked_topo(evoked, layout=None, layout_scale=0.945, color=None,
         # find maxima over all evoked data for each channel pick
         ymaxes = np.array([max(np.abs(e.data[t]).max() for e in evoked)
                            for t in picks])
-        print(ymaxes)
         ylim_ = (-ymaxes, ymaxes)
     elif isinstance(ylim, dict):
         ylim_ = _handle_default('ylim', ylim)
