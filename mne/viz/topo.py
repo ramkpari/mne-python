@@ -10,7 +10,6 @@
 from copy import deepcopy
 from functools import partial
 from itertools import cycle
-from statsmodels import robust
 
 import numpy as np
 
