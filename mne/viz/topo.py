@@ -10,6 +10,7 @@
 from copy import deepcopy
 from functools import partial
 from itertools import cycle
+from statsmodels import robust
 
 import numpy as np
 
@@ -725,7 +726,7 @@ def _plot_evoked_topo(evoked, layout=None, layout_scale=0.945, color=None,
         is_nirs = len(set.intersection(types_used, nirs_types)) > 0
         if is_meg:
             types_used = list(types_used)[::-1]  # -> restore kwarg order
-            picks = [pick_types(info, meg=kk, ref_meg=False, exclude=[])
+            picks = [pick_types(info, meg=kk, ref_meg=False)
                      for kk in types_used]
         elif is_nirs:
             types_used = list(types_used)[::-1]  # -> restore kwarg order
@@ -758,9 +759,13 @@ def _plot_evoked_topo(evoked, layout=None, layout_scale=0.945, color=None,
 
     if ylim is None:
         # find maxima over all evoked data for each channel pick
-        ymaxes = np.array([max(np.abs(e.data[t]).max() for e in evoked)
+        ymaxes = np.array([max((e.data[t]).max() for e in evoked)
                            for t in picks])
-        ylim_ = (-ymaxes, ymaxes)
+        ymins = np.array([min((e.data[t]).min() for e in evoked)
+                           for t in picks])
+
+        ylim_ = (ymins, ymaxes)
+
     elif isinstance(ylim, dict):
         ylim_ = _handle_default('ylim', ylim)
         ylim_ = [ylim_[kk] for kk in types_used]
